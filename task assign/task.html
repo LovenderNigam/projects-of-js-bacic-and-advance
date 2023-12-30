@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Assignment</title>
+<style>
+.task-list {
+list-style-type: none;
+}
+
+.task {
+cursor: pointer;
+margin: 10px;
+padding: 10px;
+border: 1px solid #ccc;
+}
+
+.done {
+background-color: green;
+}
+
+.fail {
+background-color: red;
+}
+</style>
+</head>
+<body>
+<h1>Task Assignment</h1>
+
+<!-- Admin form to assign tasks -->
+<h2>Admin Panel</h2>
+<form id="adminForm">
+<label for="task">Task:</label>
+<input type="text" id="task" required>
+<label for="subject">Subject:</label>
+<input type="text" id="subject" required>
+<button type="button" onclick="assignTask()">Assign Task</button>
+</form>
+
+<!-- Task List -->
+<h2>Task List</h2>
+<ul class="task-list" id="taskList">
+<!-- Tasks will be dynamically added here -->
+</ul>
+
+<!-- Task Details -->
+<h2>Task Details</h2>
+<div id="taskDetails">
+<!-- Task details will be displayed here -->
+</div>
+
+<script>
+function assignTask() {
+const taskInput = document.getElementById("task").value;
+const subjectInput = document.getElementById("subject").value;
+
+if (taskInput && subjectInput) {
+const taskList = document.getElementById("taskList");
+const taskItem = document.createElement("li");
+taskItem.className = "task";
+taskItem.innerHTML = `<strong>${taskInput}</strong> - ${subjectInput}`;
+taskItem.addEventListener("click", () => showTaskDetails(taskInput, subjectInput));
+taskList.appendChild(taskItem);
+
+// Clear input fields
+document.getElementById("task").value = "";
+document.getElementById("subject").value = "";
+}
+}
+
+function showTaskDetails(task, subject) {
+const taskDetails = document.getElementById("taskDetails");
+taskDetails.innerHTML = `<p><strong>Task:</strong> ${task}</p><p><strong>Subject:</strong> ${subject}</p>`;
+
+// Add buttons for task status
+taskDetails.innerHTML += `
+<button onclick="changeTaskStatus('done')">Done</button>
+<button onclick="changeTaskStatus('fail')">Fail</button>
+`;
+}
+
+function changeTaskStatus(status) {
+const taskDetails = document.getElementById("taskDetails");
+
+if (status === "done") {
+taskDetails.classList.add("done");
+} else if (status === "fail") {
+taskDetails.classList.add("fail");
+}
+}
+</script>
+</body>
+</html>

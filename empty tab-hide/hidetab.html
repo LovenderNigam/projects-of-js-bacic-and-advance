@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body {
+background: whitesmoke;
+}
+
+[data-tab-info] {
+display: none;
+}
+
+.active[data-tab-info] {
+display: block;
+}
+
+.tab-content {
+font-size: 30px;
+font-family: sans-serif;
+font-weight: bold;
+color: rgb(82, 75, 75);
+}
+
+.tabs {
+font-size: 40px;
+color: rgb(255, 255, 255);
+display: flex;
+margin: 0;
+}
+
+.tabs span {
+background: rgb(28, 145, 38);
+padding: 10px;
+border: 1px solid rgb(255, 255, 255);
+}
+
+.tabs span:hover {
+background: rgb(29, 185, 112);
+cursor: pointer;
+color: black;
+}
+</style>
+</head>
+
+<body>
+<div class="tabs" id="tabsContainer">
+<span data-tab-value="#tab_1">Tab-1</span>
+<span data-tab-value="#tab_2">Tab-2</span>
+<span data-tab-value="#tab_3">tab-3</span>
+</div>
+
+<div class="tab-content">
+<div class="tabs__tab active" id="tab_1" data-tab-info>
+<p>1</p>
+</div>
+<div class="tabs__tab" id="tab_2" data-tab-info>
+<p>2</p>
+</div>
+<div class="tabs__tab" id="tab_3" data-tab-info>
+<p>3</p>
+</div>
+</div>
+<script type="text/javascript">
+const tabsContainer = document.getElementById("tabsContainer");
+const tabs = document.querySelectorAll("[data-tab-value]");
+const tabInfos = document.querySelectorAll("[data-tab-info]");
+
+// Check if there's any tab with data before showing the tabs
+const hasData = Array.from(tabInfos).some(
+(tabInfo) => tabInfo.querySelector("p").textContent.trim() !== ""
+);
+
+if (hasData) {
+tabsContainer.style.display = "block";
+
+tabs.forEach((tab) => {
+tab.addEventListener("click", () => {
+const target = document.querySelector(tab.dataset.tabValue);
+
+tabInfos.forEach((tabInfo) => {
+tabInfo.classList.remove("active");
+});
+target.classList.add("active");
+});
+});
+
+tabInfos.forEach((tabInfo) => {
+if (tabInfo.querySelector("p").textContent.trim() === "") {
+const correspondingTab = document.querySelector(
+`[data-tab-value="#${tabInfo.id}"]`
+);
+correspondingTab.style.display = "none";
+}
+});
+} else {
+tabsContainer.style.display = "none";
+}
+</script>
+</body>
+</html>  

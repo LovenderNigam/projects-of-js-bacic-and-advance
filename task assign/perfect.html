@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Assignment</title>
+    <style>
+        .task-list {
+            list-style-type: none;
+        }
+
+        .task {
+            cursor: pointer;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        /* Style for the task buttons */
+        .task-buttons button {
+            border-radius: 20px;
+            padding: 5px 10px;
+            width: 100px;
+            height: 30px;
+            margin: 5px;
+            opacity: 0.7; /* Reduced opacity for the buttons */
+        }
+
+        /* Set button text color based on task status */
+        .task-buttons button.done {
+            color: green;
+            background-color: rgba(0, 128, 0, 0.2); /* Reduced opacity green background for the "Done" button */
+        }
+
+        .task-buttons button.fail {
+            color: red;
+            background-color: rgba(255, 0, 0, 0.2); /* Reduced opacity red background for the "Fail" button */
+        }
+
+        .task-buttons button.pending {
+            color: yellow;
+            background-color: rgba(255, 255, 0, 0.2); /* Reduced opacity yellow background for the "Pending" button */
+        }
+
+        .task-buttons button.active {
+            color: blue;
+            background-color: rgba(0, 0, 255, 0.2); /* Reduced opacity blue background for the "Active" button */
+        }
+
+        .task-buttons button.inactive {
+            color: maroon;
+            background-color: rgba(128, 0, 0, 0.2); /* Reduced opacity maroon background for the "Inactive" button */
+        }
+    </style>
+</head>
+<body>
+    <h1>Task Assignment</h1>
+
+    <!-- Admin form to assign tasks -->
+    <h2>Admin Panel</h2>
+    <form id="adminForm">
+        <label for="task">Task:</label>
+        <input type="text" id="task" required>
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" required>
+        <button type="button" onclick="assignTask()">Assign Task</button>
+    </form>
+
+    <!-- Task List -->
+    <h2>Task List</h2>
+    <ul class="task-list" id="taskList">
+        <!-- Tasks will be dynamically added here -->
+    </ul>
+
+    <!-- JavaScript for task details -->
+    <script>
+        // Function to assign a task
+        function assignTask() {
+            const taskInput = document.getElementById("task").value;
+            const subjectInput = document.getElementById("subject").value;
+
+            if (taskInput && subjectInput) {
+                const taskList = document.getElementById("taskList");
+                const taskItem = document.createElement("li");
+                taskItem.className = "task";
+                taskItem.innerHTML = `<strong>${taskInput}</strong> - ${subjectInput} - <span class="task-status" style="color: blue;">Active task</span>`;
+                taskList.appendChild(taskItem);
+
+                // Save the tasks to localStorage
+                saveTasksToLocalStorage();
+
+                // Clear input fields
+                document.getElementById("task").value = "";
+                document.getElementById("subject").value = "";
+
+                // Add click event to show buttons
+                taskItem.addEventListener("click", () => showTaskButtons(taskItem));
+            }
+        }
+
+        // Function to show task buttons
+        function showTaskButtons(taskItem) {
+            const buttonsDiv = document.createElement("div");
+            buttonsDiv.innerHTML = `
+                <button class="done" onclick="changeTaskStatus(this, 'done')">Done</button>
+                <button class="fail" onclick="changeTaskStatus(this, 'fail')">Fail</button>
+                <button class="pending" onclick="changeTaskStatus(this, 'pending')">Pending</button>
+                <button class="active" onclick="changeTaskStatus(this, 'active')">Active</button>
+                <button class="inactive" onclick="changeTaskStatus(this, 'inactive')">Inactive</button>
+            `;
+
+            // Check if buttons are already shown
+            if (!taskItem.querySelector('.task-buttons')) {
+                buttonsDiv.className = 'task-buttons';
+                taskItem.appendChild(buttonsDiv);
+            } else {
+                // If buttons are already shown, remove them to compress the task
+                taskItem.removeChild(taskItem.querySelector('.task-buttons'));
+            }
+        }
+
+        // Function to change task status
+        function changeTaskStatus(button, status) {
+            const taskItem = button.parentElement.parentElement;
+            const taskHeading = taskItem.querySelector('strong');
+            const taskStatus = taskItem.querySelector('.task-status');
+
+            // Set the default message and its color based on the button clicked
+            let defaultMessage = '';
+            let defaultColor = '';
+            switch (status) {
+                case 'done':
+                    defaultMessage = 'Done task';
+                    defaultColor = 'green';
+                    break;
+                case 'fail':
+                    defaultMessage = 'Fail task';
+                    defaultColor = 'red';
+                    break;
+                case 'pending':
+                    defaultMessage = 'Pending task';
+                    defaultColor = 'yellow';
+                    break;
+                case 'active':
+                    defaultMessage = 'Active task';
+                    defaultColor = 'blue';
+                    break;
+                case 'inactive':
+                    defaultMessage = 'Inactive task';
+                    defaultColor = 'maroon';
+                    break;
+                default:
+                    defaultMessage = 'Default task';
+                    defaultColor = 'black';
+                    break;
+            }
+
+            // Update the default message and its color
+            taskStatus.textContent = defaultMessage;
+            taskStatus.style.color = defaultColor;
+            taskHeading.style.color = defaultColor; // Change task title color
+
+            // Save the tasks to localStorage
+            saveTasksToLocalStorage();
+        }
+
+        // Function to load tasks from localStorage
+        function loadTasksFromLocalStorage() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            const taskList = document.getElementById("taskList");
+
+            tasks.forEach(task => {
+                const taskItem = document.createElement("li");
+                taskItem.className = "task";
+                taskItem.innerHTML = `<strong>${task.taskInput}</strong> - ${task.subjectInput} - <span class="task-status" style="color: blue;">Active task</span>`;
+                taskList.appendChild(taskItem);
+            });
+        }
+
+        // Function to save tasks to localStorage
+        function saveTasksToLocalStorage() {
+            const taskList = document.querySelectorAll(".task");
+            const tasks = [];
+
+            taskList.forEach(taskItem => {
+                const taskInput = taskItem.querySelector('strong').textContent;
+                const subjectInput = taskItem.textContent.split(" - ")[1];
+                tasks.push({ taskInput, subjectInput });
+            });
+
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        // Load tasks from localStorage on page load
+        window.addEventListener('load', () => {
+            loadTasksFromLocalStorage();
+        });
+    </script>
+</body>
+</html>

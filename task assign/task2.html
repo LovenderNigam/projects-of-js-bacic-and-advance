@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Assignment</title>
+    <style>
+        .task-list {
+            list-style-type: none;
+        }
+
+        .task {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .done {
+            color: green;
+        }
+
+        .fail {
+            color: red;
+        }
+
+        .pending {
+            color: yellow;
+        }
+
+        .active {
+            color: blue;
+        }
+
+        .inactive {
+            color: maroon;
+        }
+
+        /* Style for the task buttons */
+        .task-buttons button {
+            border-radius: 20px; /* Add border radius */
+            padding: 5px 10px; /* Adjust padding for a better appearance */
+            width: 100px; /* Set a fixed width */
+            height: 30px; /* Set a fixed height */
+            margin: 5px; /* Add margin for spacing */
+        }
+
+        /* Style the button text color based on the task status */
+        .task-buttons button.done {
+            color: green;
+        }
+
+        .task-buttons button.fail {
+            color: red;
+        }
+
+        .task-buttons button.pending {
+            color: yellow;
+        }
+
+        .task-buttons button.active {
+            color: blue;
+        }
+
+        .task-buttons button.inactive {
+            color: maroon;
+        }
+    </style>
+</head>
+<body>
+    <h1>Task Assignment</h1>
+
+    <!-- Task List -->
+    <h2>Task List</h2>
+    <ul class="task-list" id="taskList">
+        <li class="task" data-task-id="task1" onclick="showTaskButtons(this, 'task1')">Task 1 - <span class="task-status">pending</span></li>
+        <li class="task" data-task-id="task2" onclick="showTaskButtons(this, 'task2')">Task 2 - <span class="task-status">active</span></li>
+        <!-- Add more tasks as needed -->
+    </ul>
+
+    <script>
+        // Load task statuses from localStorage on page load
+        window.addEventListener('load', () => {
+            const taskList = document.querySelectorAll('.task');
+            taskList.forEach(task => {
+                const taskId = task.getAttribute('data-task-id');
+                const savedStatus = localStorage.getItem(taskId);
+                if (savedStatus) {
+                    updateTaskStatus(task, savedStatus);
+                }
+            });
+        });
+
+        function showTaskButtons(taskElement, taskId) {
+            // Hide buttons for the previous task (if any)
+            hideTaskButtons();
+
+            // Create buttons for the clicked task
+            const taskButtons = document.createElement("div");
+            taskButtons.className = "task-buttons";
+            taskButtons.innerHTML = `
+                <button class="done" onclick="changeTaskStatus(this, 'done', '${taskId}')">Done</button>
+                <button class="fail" onclick="changeTaskStatus(this, 'fail', '${taskId}')">Fail</button>
+                <button class="pending" onclick="changeTaskStatus(this, 'pending', '${taskId}')">Pending</button>
+                <button class="active" onclick="changeTaskStatus(this, 'active', '${taskId}')">Active</button>
+                <button class="inactive" onclick="changeTaskStatus(this, 'inactive', '${taskId}')">Inactive</button>
+            `;
+
+            // Append buttons below the clicked task
+            taskElement.appendChild(taskButtons);
+        }
+
+        function hideTaskButtons() {
+            // Remove buttons from all tasks
+            const taskButtonsList = document.querySelectorAll(".task-buttons");
+            taskButtonsList.forEach(taskButtons => {
+                taskButtons.remove();
+            });
+        }
+
+        function changeTaskStatus(button, status, taskId) {
+            // Update the status for the clicked task
+            const taskStatus = button.parentElement.parentElement.querySelector(".task-status");
+            taskStatus.style.color = getStatusColor(status);
+            taskStatus.textContent = status;
+
+            // Save the status to localStorage
+            localStorage.setItem(taskId, status);
+
+            // Hide the buttons after changing the status
+            hideTaskButtons();
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'done':
+                    return 'green';
+                case 'fail':
+                    return 'red';
+                case 'pending':
+                    return 'yellow';
+                case 'active':
+                    return 'blue';
+                case 'inactive':
+                    return 'maroon';
+                default:
+                    return 'black'; // Default text color
+            }
+        }
+
+        function updateTaskStatus(taskElement, status) {
+            const taskStatus = taskElement.querySelector(".task-status");
+            taskStatus.style.color = getStatusColor(status);
+            taskStatus.textContent = status;
+        }
+    </script>
+</body>
+</html>

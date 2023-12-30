@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dynamic Sub-divisions</title>
+  <style>
+    .sub-division-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    
+    .sub-division {
+      margin: 10px;
+      padding: 10px;
+      background-color: lightgray;
+      cursor: pointer;
+    }
+    
+    .sub-division.active {
+      background-color: lightblue;
+    }
+    
+    .sub-division .sub-sub-division {
+      margin-top: 5px;
+      padding: 5px;
+      background-color: lightblue;
+      display: none;
+    }
+    
+    .sub-division.active .sub-sub-division {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <button id="generateButton">Generate Sub-divisions</button>
+  <div id="subDivisionContainer" class="sub-division-container"></div>
+
+  <script>
+    // Get the button element
+    var generateButton = document.getElementById('generateButton');
+
+    // Add event listener to the button
+    generateButton.addEventListener('click', generateSubDivisions);
+
+    // Function to generate sub-divisions
+    function generateSubDivisions() {
+      var subDivisionContainer = document.getElementById('subDivisionContainer');
+
+      // Check if sub-divisions are visible
+      var subDivisionsVisible = subDivisionContainer.hasChildNodes();
+
+      // Toggle sub-divisions visibility
+      if (!subDivisionsVisible) {
+        // Generate 5 sub-divisions
+        for (var i = 1; i <= 5; i++) {
+          var subDivision = createSubDivision(i);
+          subDivisionContainer.appendChild(subDivision);
+        }
+      } else {
+        // Clear the container
+        subDivisionContainer.innerHTML = '';
+      }
+    }
+    
+    // Function to create a sub-division element
+    function createSubDivision(number) {
+      var subDivision = document.createElement('div');
+      subDivision.className = 'sub-division';
+      subDivision.textContent = 'Sub-division ' + number;
+      
+      // Add click event listener to toggle sub-division's subdivisions
+      subDivision.addEventListener('click', function() {
+        var subSubDivisions = this.getElementsByClassName('sub-sub-division');
+        
+        // Toggle visibility of sub-division's subdivisions
+        for (var i = 0; i < subSubDivisions.length; i++) {
+          subSubDivisions[i].style.display = subSubDivisions[i].style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Toggle active class on clicked sub-division
+        this.classList.toggle('active');
+        
+        // Hide buttons of other sub-divisions
+        var otherSubDivisions = Array.from(this.parentElement.getElementsByClassName('sub-division'));
+        otherSubDivisions.forEach(function(subDiv) {
+          if (subDiv !== this) {
+            var subSubDivs = subDiv.getElementsByClassName('sub-sub-division');
+            for (var i = 0; i < subSubDivs.length; i++) {
+              subSubDivs[i].style.display = 'none';
+            }
+          }
+        }, this);
+      });
+      
+      // Add sub-division's subdivisions container
+      var subSubDivisionContainer = document.createElement('div');
+      subSubDivisionContainer.className = 'sub-sub-division-container';
+      
+      // Generate sub-division's subdivisions
+      for (var i = 1; i <= 3; i++) {
+        var subSubDivision = createSubSubDivision(number, i);
+        subSubDivisionContainer.appendChild(subSubDivision);
+      }
+      
+      // Append sub-division's subdivisions container to the sub-division
+      subDivision.appendChild(subSubDivisionContainer);
+      
+      return subDivision;
+    }
+    
+    // Function to create a sub-sub-division element
+    function createSubSubDivision(subDivisionNumber, subSubDivisionNumber) {
+      var subSubDivision = document.createElement('div');
+      subSubDivision.className = 'sub-sub-division';
+      subSubDivision.textContent = 'Button ' + subDivisionNumber + '-' + subSubDivisionNumber;
+      
+      // Add click event listener to visit another page
+      subSubDivision.addEventListener('click', function() {
+        // Redirect to another page
+        window.location.href = 'https://www.example.com/page' + subDivisionNumber + '_' + subSubDivisionNumber + '.html';
+      });
+      
+      return subSubDivision;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #slider-container {
+      width: 500px;
+      overflow: hidden;
+    }
+    
+    #slider {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+    
+    .slide {
+      min-width: 500px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="slider-container">
+  <div id="slider">
+    <div class="slide"><img src="image1.jpg" alt="Image 1"></div>
+    <div class="slide"><img src="image2.jpg" alt="Image 2"></div>
+    <div class="slide"><img src="image3.jpg" alt="Image 3"></div>
+  </div>
+</div>
+
+<script>
+  var slider = document.getElementById("slider");
+  var slideWidth = document.querySelector(".slide").clientWidth;
+  var currentIndex = 0;
+
+  function slideTo(index) {
+    slider.style.transform = `translateX(-${index * slideWidth}px)`;
+  }
+
+  setInterval(function() {
+    currentIndex = (currentIndex + 1) % slider.children.length;
+    slideTo(currentIndex);
+  }, 3000);
+</script>
+
+</body>
+</html>
+
